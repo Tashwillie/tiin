@@ -1,7 +1,3 @@
 {
-  "rewrites": [
-    { "source": "/mastermind", "destination": "/mastermind.html" },
-    { "source": "/success", "destination": "/success.html" },
-    { "source": "/mastermind-success", "destination": "/mastermind-success.html" }
-  ]
+  "cleanUrls": true
 }
