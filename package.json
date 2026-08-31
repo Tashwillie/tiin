@@ -1,0 +1,11 @@
+{
+  "name": "tiin",
+  "private": true,
+  "description": "Thrive Impact Investors Network — taster and Mastermind landing pages",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "stripe": "^18.5.0"
+  }
+}
