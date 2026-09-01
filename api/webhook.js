@@ -1,4 +1,5 @@
 const { stripeClient, json } = require('../lib/stripe');
+const { syncPaidContact } = require('../lib/ghl');
 
 module.exports.config = {
   api: { bodyParser: false },
@@ -39,6 +40,13 @@ module.exports = async function handler(req, res) {
   if (event.type === 'payment_intent.succeeded') {
     const intent = event.data.object;
     console.log('[paid]', intent.id, intent.metadata);
+    try {
+      const ghl = await syncPaidContact(intent, event.livemode);
+      if (ghl) console.log('[ghl] contact', ghl.contactId, ghl.isNew ? 'created' : 'updated');
+    } catch (err) {
+      console.error('[ghl]', err.message, err.payload || '');
+      return json(res, 500, { error: 'Paid, but the CRM sync failed. Stripe will retry.' });
+    }
   }
 
   if (event.type === 'payment_intent.payment_failed') {
