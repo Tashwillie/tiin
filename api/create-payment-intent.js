@@ -1,5 +1,6 @@
 const {
   TASTER_SESSIONS,
+  TASTER_SOLD_OUT,
   TASTER_AMOUNT,
   json,
   readJsonBody,
@@ -22,6 +23,9 @@ module.exports = async function handler(req, res) {
 
   const buyer = buyerFromBody(body);
   if (buyer.error) return json(res, 400, { error: buyer.error });
+  if (TASTER_SOLD_OUT.includes(buyer.session)) {
+    return json(res, 400, { error: 'That session is sold out. Please choose the next available date.' });
+  }
   if (!TASTER_SESSIONS.includes(buyer.session)) {
     return json(res, 400, { error: 'Please choose a valid session date.' });
   }

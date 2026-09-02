@@ -1,12 +1,15 @@
 // ── Taster sessions — single source of truth for dates + countdown.
 //    Keep these in sync with SESSIONS in api/create-payment-intent.js. ──
 const TASTER_SESSIONS = [
-  { id: '2026-09-02', label: 'Wed 2 September 2026', short: 'Wed 2 Sept', iso: '2026-09-02T12:00:00Z' },
-  { id: '2026-09-23', label: 'Wed 23 September 2026', short: 'Wed 23 Sept', iso: '2026-09-23T12:00:00Z' },
+  { id: '2026-09-02', label: 'Wed 2 September 2026', short: 'Wed 2 Sept', iso: '2026-09-02T12:00:00Z', soldOut: true },
+  { id: '2026-09-23', label: 'Wed 23 September 2026', short: 'Wed 23 Sept', iso: '2026-09-23T12:00:00Z', soldOut: false },
 ]; // T12:00:00Z = 1:00pm UK (BST = UTC+1) in September
+function bookableSessions() {
+  return TASTER_SESSIONS.filter(function (s) { return !s.soldOut; });
+}
 function selectedSession() {
-  const c = document.querySelector('input[name="taster-session"]:checked');
-  return TASTER_SESSIONS.find(function (s) { return s.id === (c && c.value); }) || TASTER_SESSIONS[0];
+  const c = document.querySelector('input[name="taster-session"]:checked:not(:disabled)');
+  return bookableSessions().find(function (s) { return s.id === (c && c.value); }) || bookableSessions()[0];
 }
 
 // ── Scroll reveal ─────────────────────────────────────────────────────
@@ -53,8 +56,9 @@ new IntersectionObserver((entries) => {
 // ── Hero countdown — compact box clock to the session start ───────────
 (function () {
   const box = document.getElementById('heroCountdown');
-  if (!box) return;
-  const target = new Date(TASTER_SESSIONS[0].iso); // next session (earliest date)
+  const next = bookableSessions()[0];
+  if (!box || !next) return;
+  const target = new Date(next.iso);
   const units = ['days', 'hrs', 'mins', 'secs'];
   box.innerHTML = units.map(function (u) {
     return '<span class="hc-unit"><span class="hc-n" data-u="' + u + '">–</span><span class="hc-l">' + u + '</span></span>';

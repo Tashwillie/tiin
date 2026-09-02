@@ -264,6 +264,43 @@ header.hero {
   border-color: var(--navy); background: #fff; box-shadow: 0 0 0 3px rgba(15, 15, 90, 0.12);
 }
 .session-opt:has(input:focus-visible) { box-shadow: 0 0 0 3px rgba(15, 15, 90, 0.28); }
+.session-opt.is-sold-out {
+  cursor: not-allowed;
+  overflow: hidden;
+  pointer-events: none;
+}
+.session-opt.is-sold-out:hover { border-color: var(--rule); }
+.session-opt.is-sold-out.is-selected,
+.session-opt.is-sold-out:has(input:checked) {
+  border-color: var(--rule); background: var(--cream); box-shadow: none;
+}
+.session-opt.is-sold-out::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.62);
+  z-index: 1;
+}
+.session-opt.is-sold-out::after {
+  content: 'SOLD OUT';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  transform: translate(-50%, -50%) rotate(-16deg);
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #b3261e;
+  border: 3px double #b3261e;
+  padding: 5px 11px;
+  border-radius: 3px;
+  white-space: nowrap;
+  opacity: 0.92;
+  box-shadow: 0 1px 0 rgba(179, 38, 30, 0.15);
+}
 @media (max-width: 520px) { .session-opts { grid-template-columns: 1fr; } }
 .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .field { display: flex; flex-direction: column; gap: 6px; }
