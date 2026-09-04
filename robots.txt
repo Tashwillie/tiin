@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Disallow: /api/
+Disallow: /success
+Disallow: /investment-programme-success
+
+Sitemap: https://www.tiin.co.uk/sitemap.xml
