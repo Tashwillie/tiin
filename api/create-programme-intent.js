@@ -27,13 +27,13 @@ module.exports = async function handler(req, res) {
       amount: PROGRAMME_DEPOSIT_AMOUNT,
       currency: 'gbp',
       description: '12 Month Children\'s Homes Investment Programme — deposit',
-      product: 'programme-deposit',
       buyer,
+      product: 'programme-deposit',
     });
     if (result.error) return json(res, result.status || 503, { error: result.error });
     return json(res, 200, { clientSecret: result.clientSecret });
   } catch (err) {
-    console.error('[create-mastermind-intent]', err);
+    console.error('[create-programme-intent]', err);
     return json(res, 500, { error: 'Could not start the payment. Please try again.' });
   }
 };

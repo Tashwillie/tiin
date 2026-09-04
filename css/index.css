@@ -701,6 +701,8 @@ footer .inner {
   color: var(--cream);
   font-size: 1rem;
   font-variation-settings: 'SOFT' 100;
+  max-width: 22em;
+  line-height: 1.25;
 }
 footer .tagline {
   font-family: var(--serif); font-style: italic;

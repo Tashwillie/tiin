@@ -1,7 +1,7 @@
 {
   "name": "tiin",
   "private": true,
-  "description": "Thrive Impact Investors Network — taster and Mastermind landing pages",
+  "description": "Thrive Impact Investors Network — taster and investment programme landing pages",
   "engines": {
     "node": ">=18"
   },

@@ -118,6 +118,14 @@ nav.top.scrolled .nav-logo { height: 42px; }
   font-variation-settings: 'SOFT' 80;
   margin-top: 3px;
 }
+.nav-lockup .child-short { display: none; }
+@media (max-width: 1100px) and (min-width: 768px) {
+  .nav-lockup .child { font-size: 0.8rem; max-width: 16.5rem; line-height: 1.2; }
+}
+@media (max-width: 767px) {
+  .nav-lockup .child { display: none; }
+  .nav-lockup .child-short { display: block; }
+}
 @media (max-width: 600px) { .nav-lockup { display: none; } }
 
 .nav-cta {
@@ -190,9 +198,9 @@ header.hero {
   object-position: center 30%; display: block;
 }
 .hero .eyebrow { color: var(--mustard); }
-.hero h1 { color: var(--cream); margin-bottom: 24px; }
+.hero h1 { color: var(--cream); margin-bottom: 24px; font-size: clamp(1.85rem, 4.2vw, 3.5rem); }
 .hero h1 .accent {
-  display: block;          /* own line, so it never sits beside "Mastermind" */
+  display: block;          /* own line, so it never sits beside the H1 */
   margin-top: 0.5em;
   font-size: 0.68em;       /* clearly smaller than the title */
   line-height: 1.12;
@@ -657,6 +665,8 @@ footer .inner {
   color: var(--cream);
   font-size: 1rem;
   font-variation-settings: 'SOFT' 100;
+  max-width: 22em;
+  line-height: 1.25;
 }
 footer .tagline {
   font-family: var(--serif); font-style: italic;
@@ -718,7 +728,7 @@ footer .tagline {
   .hero-media { animation: none !important; transform: none !important; }
 }
 
-/* ── Mastermind additions ─────────────────────────────────────────── */
+/* ── Programme page additions ─────────────────────────────────────── */
 /* Solid feature cards (How it works, Programme content) — the .outcome
    cards are translucent for the collage band; these sit on cream/white. */
 .feature-grid { margin-top: 44px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }

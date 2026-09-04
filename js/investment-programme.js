@@ -93,7 +93,7 @@ function getAttribution() {
 const GA4_ID = '';
 
 // ── Payment: branded details (step 1) then Stripe Payment Element
-//    (step 2) — inline, £250 GBP Mastermind deposit. ─────────────────
+//    (step 2) — inline, £250 GBP Programme deposit. ─────────────────
 (function initPayment() {
   const detailsStep = document.getElementById('stepDetails');
   const paymentStep = document.getElementById('stepPayment');
@@ -177,7 +177,7 @@ const GA4_ID = '';
         phone: f.phone.value.trim(),
         consent: f.consent ? f.consent.checked : false,
       }, getAttribution());
-      const res = await fetch('/api/create-mastermind-intent', {
+      const res = await fetch('/api/create-programme-intent', {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body),
       });
       const data = await res.json();
@@ -186,7 +186,7 @@ const GA4_ID = '';
         elements,
         clientSecret: data.clientSecret,
         confirmParams: {
-          return_url: location.origin + '/mastermind-success',
+          return_url: location.origin + '/investment-programme-success',
           payment_method_data: {
             billing_details: { name: (body.firstName + ' ' + body.lastName).trim(), email: body.email, phone: body.phone },
           },
@@ -194,7 +194,7 @@ const GA4_ID = '';
         redirect: 'if_required',
       });
       if (result.error) { showError(result.error.message || 'Your payment could not be completed.'); throw result.error; }
-      window.location.assign('/mastermind-success');
+      window.location.assign('/investment-programme-success');
     } catch (e) {
       console.error('[pay]', e); busy = false; payBtn.disabled = false;
     }

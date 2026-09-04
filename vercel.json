@@ -1,3 +1,25 @@
 {
-  "cleanUrls": true
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/mastermind",
+      "destination": "/investment-programme",
+      "statusCode": 301
+    },
+    {
+      "source": "/mastermind.html",
+      "destination": "/investment-programme",
+      "statusCode": 301
+    },
+    {
+      "source": "/mastermind-success",
+      "destination": "/investment-programme-success",
+      "statusCode": 301
+    },
+    {
+      "source": "/mastermind-success.html",
+      "destination": "/investment-programme-success",
+      "statusCode": 301
+    }
+  ]
 }
