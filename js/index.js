@@ -2,8 +2,8 @@
 //    Keep these in sync with SESSIONS in api/create-payment-intent.js. ──
 const TASTER_SESSIONS = [
   { id: '2026-09-02', label: 'Wed 2 September 2026', short: 'Wed 2 Sept', iso: '2026-09-02T12:00:00Z', soldOut: true },
-  { id: '2026-09-23', label: 'Wed 23 September 2026', short: 'Wed 23 Sept', iso: '2026-09-23T12:00:00Z', soldOut: false },
-]; // T12:00:00Z = 1:00pm UK (BST = UTC+1) in September
+  { id: '2026-10-24', label: 'Sat 24 October 2026', short: 'Sat 24 Oct', iso: '2026-10-24T12:00:00Z', soldOut: false },
+]; // T12:00:00Z = 1:00pm UK (BST = UTC+1); 24 Oct 2026 is still BST
 function bookableSessions() {
   return TASTER_SESSIONS.filter(function (s) { return !s.soldOut; });
 }
