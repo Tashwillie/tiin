@@ -92,6 +92,7 @@ new IntersectionObserver((entries) => {
   const box = document.getElementById('reserveCountdown');
   if (!box) return;
   const labelEl = document.getElementById('countLabel');
+  const dateFact = document.getElementById('sessionDateFact');
   const units = ['days', 'hrs', 'mins', 'secs'];
   box.innerHTML = units.map(function (u) {
     return '<div class="count-unit"><span class="n" data-u="' + u + '">–</span><span class="l">' + u + '</span></div>';
@@ -123,6 +124,7 @@ new IntersectionObserver((entries) => {
     const s = selectedSession();
     target = new Date(s.iso);
     if (labelEl) labelEl.textContent = s.short;
+    if (dateFact) dateFact.textContent = s.label;
     document.querySelectorAll('.session-opt').forEach(function (o) {
       const r = o.querySelector('input');
       o.classList.toggle('is-selected', !!(r && r.checked));
