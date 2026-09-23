@@ -34,7 +34,7 @@ new IntersectionObserver((entries) => {
   if (payInView) sticky.classList.remove('show');
 }, { threshold: 0.2 }).observe(payBlock);
 
-// ── Countdown to Cohort 1 start: 23 Sep 2026, 9am UK ──────────────────
+// ── Countdown to Cohort 1 start: 27 Jan 2027, 9am UK ──────────────────
 function runCountdown(boxId, targetIso, liveMsg) {
   const box = document.getElementById(boxId);
   if (!box) return;
@@ -64,8 +64,8 @@ function runCountdown(boxId, targetIso, liveMsg) {
   }
   tick(); iv = setInterval(tick, 1000);
 }
-runCountdown('heroCountdown', '2026-09-23T08:00:00Z', 'Cohort 1 is underway');
-runCountdown('cohortCountdown', '2026-09-23T08:00:00Z', 'Cohort 1 is underway');
+runCountdown('heroCountdown', '2027-01-27T09:00:00Z', 'Cohort 1 is underway');
+runCountdown('cohortCountdown', '2027-01-27T09:00:00Z', 'Cohort 1 is underway');
 
 // ── Attribution: first-touch UTM + referrer ───────────────────────────
 const ATTR_KEY = 'tiin_attr';
