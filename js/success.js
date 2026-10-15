@@ -13,8 +13,8 @@
 
   // Confirm the exact session the buyer selected (passed as ?s=... on redirect).
   const SESSION_DATES = {
-    '2026-09-23': 'Wednesday 23 September 2026',
-    '2026-10-24': 'Saturday 24 October 2026',
+    '2026-11-14': 'Saturday 14 November 2026',
+    '2026-12-19': 'Saturday 19 December 2026',
   };
   const sDate = SESSION_DATES[params.get('s')];
   if (sDate) {
