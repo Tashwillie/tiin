@@ -181,14 +181,20 @@ if (GA4_ID) {
 }
 
 // ── Payment: our branded details form (step 1) then Stripe Payment
-//    Element (step 2) — inline, no redirect for cards, £149 GBP fixed. ────
+//    Element (step 2). £149 unless the Pin promo is applied, then £99. ──
 (function initPayment() {
+  const LIST_AMOUNT = 14900;
   const detailsStep = document.getElementById('stepDetails');
   const paymentStep = document.getElementById('stepPayment');
   const toPaymentBtn = document.getElementById('toPayment');
   const payBtn = document.getElementById('payBtn');
   const editLink = document.getElementById('editDetails');
   const errorBox = document.getElementById('payError');
+  const promoInput = document.getElementById('promoCode');
+  const applyPromoBtn = document.getElementById('applyPromo');
+  const promoMsg = document.getElementById('promoMsg');
+  const bookTotal = document.getElementById('bookTotal');
+  const whoPrice = document.getElementById('whoPrice');
   if (!detailsStep || typeof Stripe === 'undefined') return;
 
   const f = {
@@ -200,10 +206,43 @@ if (GA4_ID) {
   };
 
   let stripe, elements, paymentElement, mounted = false, busy = false;
+  let checkoutAmount = LIST_AMOUNT;
+  let appliedPromo = '';
 
   function showError(msg) { errorBox.textContent = msg || ''; errorBox.hidden = !msg; }
   function setInvalid(el, bad) { el.closest('.field').classList.toggle('invalid', bad); }
   function validEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+  function pounds(amount) { return '£' + (amount / 100); }
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function renderPrice() {
+    if (payBtn) {
+      payBtn.innerHTML = 'Pay ' + pounds(checkoutAmount) + ' <span class="arrow">→</span>';
+    }
+    if (whoPrice) whoPrice.textContent = pounds(checkoutAmount);
+    if (!bookTotal) return;
+    if (appliedPromo) {
+      bookTotal.innerHTML = 'Promo <strong>' + escapeHtml(appliedPromo) + '</strong> applied. You\'ll pay ' + pounds(checkoutAmount) + ' securely on the next step, no charge until you confirm. <span class="price-was">£149</span>';
+    } else {
+      bookTotal.textContent = 'You\'ll pay £149 securely on the next step, no charge until you confirm.';
+    }
+  }
+
+  function setPromoMsg(text, kind) {
+    if (!promoMsg) return;
+    promoMsg.textContent = text || '';
+    promoMsg.hidden = !text;
+    promoMsg.classList.toggle('ok', kind === 'ok');
+    promoMsg.classList.toggle('bad', kind === 'bad');
+  }
+
+  async function syncElementsAmount() {
+    if (elements) await elements.update({ amount: checkoutAmount });
+  }
 
   function validateDetails() {
     let ok = true;
@@ -214,12 +253,12 @@ if (GA4_ID) {
   }
 
   async function ensureStripe() {
-    if (stripe) return true;
+    if (stripe) { await syncElementsAmount(); return true; }
     const cfg = await fetch('/api/config').then(r => r.json()).catch(() => null);
     if (!cfg || !cfg.publishableKey) { showError('Payment is temporarily unavailable. Please email hello@tiin.co.uk.'); return false; }
     stripe = Stripe(cfg.publishableKey);
     elements = stripe.elements({
-      mode: 'payment', amount: 14900, currency: 'gbp',
+      mode: 'payment', amount: checkoutAmount, currency: 'gbp',
       appearance: {
         theme: 'flat',
         variables: {
@@ -233,7 +272,63 @@ if (GA4_ID) {
     paymentElement = elements.create('payment', {
       fields: { billingDetails: { name: 'never', email: 'never', phone: 'never' } },
     });
+    await syncElementsAmount();
     return true;
+  }
+
+  if (promoInput && applyPromoBtn) {
+    promoInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); applyPromoBtn.click(); }
+    });
+    promoInput.addEventListener('input', function () {
+      const typed = promoInput.value.trim().toUpperCase().replace(/\s+/g, '');
+      if (appliedPromo && typed !== appliedPromo) {
+        appliedPromo = '';
+        checkoutAmount = LIST_AMOUNT;
+        renderPrice();
+        syncElementsAmount();
+        setPromoMsg('Apply the code again to use the £99 price.', '');
+      }
+    });
+    applyPromoBtn.addEventListener('click', async function () {
+      const code = promoInput.value.trim();
+      showError('');
+      if (!code) {
+        appliedPromo = '';
+        checkoutAmount = LIST_AMOUNT;
+        renderPrice();
+        await syncElementsAmount();
+        setPromoMsg('', '');
+        return;
+      }
+      applyPromoBtn.disabled = true;
+      try {
+        const res = await fetch('/api/apply-taster-promo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ promoCode: code, landing_page: '/tasterpin' }),
+        });
+        const data = await res.json().catch(function () { return {}; });
+        if (!res.ok || !data.valid || !Number.isInteger(data.amount) || data.amount < 100 || data.amount >= LIST_AMOUNT) {
+          appliedPromo = '';
+          checkoutAmount = LIST_AMOUNT;
+          renderPrice();
+          await syncElementsAmount();
+          setPromoMsg(data.error || 'That promo code is not valid.', 'bad');
+          return;
+        }
+        appliedPromo = data.promoCode;
+        checkoutAmount = data.amount;
+        promoInput.value = data.promoCode;
+        renderPrice();
+        await syncElementsAmount();
+        setPromoMsg(data.promoCode + ' applied. Your seat is ' + pounds(data.amount) + '.', 'ok');
+      } catch (err) {
+        setPromoMsg('Could not check that code. Please try again.', 'bad');
+      } finally {
+        applyPromoBtn.disabled = false;
+      }
+    });
   }
 
   toPaymentBtn.addEventListener('click', async function () {
@@ -249,7 +344,7 @@ if (GA4_ID) {
     paymentStep.hidden = false;
     toPaymentBtn.disabled = false;
     paymentStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    if (GA4_ID) gtag('event', 'begin_checkout', { value: 149, currency: 'GBP' });
+    if (GA4_ID) gtag('event', 'begin_checkout', { value: checkoutAmount / 100, currency: 'GBP' });
   });
 
   editLink.addEventListener('click', function (e) {
@@ -273,6 +368,7 @@ if (GA4_ID) {
         phone: f.phone.value.trim(),
         consent: f.consent ? f.consent.checked : false,
         session: selectedSession().id,
+        promoCode: appliedPromo,
       }, getAttribution());
 
       const res = await fetch('/api/create-payment-intent', {
@@ -280,6 +376,10 @@ if (GA4_ID) {
       });
       const data = await res.json();
       if (!res.ok || !data.clientSecret) { showError(data.error || 'Could not start the payment. Please try again.'); throw new Error('intent'); }
+      if (data.amount !== checkoutAmount) {
+        showError('The price did not match your promo. Please apply the code again.');
+        throw new Error('amount');
+      }
 
       const result = await stripe.confirmPayment({
         elements,

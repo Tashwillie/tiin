@@ -403,6 +403,14 @@
               <input id="phone" name="phone" type="tel" autocomplete="tel" required>
               <span class="err">Please enter a contact number.</span>
             </div>
+            <div class="field full promo-field">
+              <label for="promoCode">Promo code</label>
+              <div class="promo-row">
+                <input id="promoCode" name="promoCode" type="text" autocomplete="off" spellcheck="false" placeholder="Enter code">
+                <button type="button" id="applyPromo" class="promo-apply">Apply</button>
+              </div>
+              <span class="promo-msg" id="promoMsg" hidden></span>
+            </div>
           </div>
           <label class="consent">
             <input type="checkbox" id="consent">
@@ -411,12 +419,12 @@
           <div class="book-actions">
             <button type="button" id="toPayment" class="btn btn-primary">Continue to payment <span class="arrow">→</span></button>
           </div>
-          <div class="book-total">You'll pay £149 securely on the next step, no charge until you confirm.</div>
+          <div class="book-total" id="bookTotal">You'll pay £149 securely on the next step, no charge until you confirm.</div>
         </div>
 
         <!-- Step 2 · payment -->
         <div class="book-step" id="stepPayment" hidden>
-          <div class="who">Reserving for <strong id="whoName"></strong> · <span id="whoEmail"></span> · <a id="editDetails" href="#">edit</a></div>
+          <div class="who">Reserving for <strong id="whoName"></strong> · <span id="whoEmail"></span> · <span id="whoPrice">£149</span> · <a id="editDetails" href="#">edit</a></div>
           <div id="payment-element"></div>
           <div class="book-actions">
             <button type="button" id="payBtn" class="btn btn-primary">Pay £149 <span class="arrow">→</span></button>

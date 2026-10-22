@@ -1,11 +1,11 @@
 const {
   TASTER_SESSIONS,
   TASTER_SOLD_OUT,
-  TASTER_AMOUNT,
   json,
   readJsonBody,
   buyerFromBody,
   createIntent,
+  resolveTasterPromo,
 } = require('../lib/stripe');
 
 module.exports = async function handler(req, res) {
@@ -30,16 +30,22 @@ module.exports = async function handler(req, res) {
     return json(res, 400, { error: 'Please choose a valid session date.' });
   }
 
+  const priced = resolveTasterPromo(body.promoCode, buyer.landing_page);
+  if (priced.error) return json(res, 400, { error: priced.error });
+
   try {
     const result = await createIntent({
-      amount: TASTER_AMOUNT,
+      amount: priced.amount,
       currency: 'gbp',
-      description: `Children's Homes Investor Taster — ${buyer.session}`,
+      description: priced.promoCode
+        ? `Children's Homes Investor Taster — ${buyer.session} (${priced.promoCode})`
+        : `Children's Homes Investor Taster — ${buyer.session}`,
       product: 'taster',
       buyer,
+      extraMetadata: priced.promoCode ? { promoCode: priced.promoCode } : {},
     });
     if (result.error) return json(res, result.status || 503, { error: result.error });
-    return json(res, 200, { clientSecret: result.clientSecret });
+    return json(res, 200, { clientSecret: result.clientSecret, amount: priced.amount });
   } catch (err) {
     console.error('[create-payment-intent]', err);
     return json(res, 500, { error: 'Could not start the payment. Please try again.' });

@@ -318,6 +318,29 @@ header.hero {
   outline: none; border-color: var(--navy);
   box-shadow: 0 0 0 3px rgba(15, 15, 90, 0.12); background: #fff;
 }
+.promo-field { margin-top: 2px; }
+.promo-row { display: flex; gap: 8px; align-items: stretch; }
+.promo-row input { flex: 1; min-width: 0; letter-spacing: 0.04em; }
+.promo-apply {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--navy);
+  background: transparent;
+  border: 1px solid var(--navy);
+  border-radius: 4px;
+  padding: 0 16px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.promo-apply:hover { background: var(--navy); color: var(--cream); }
+.promo-apply:disabled { opacity: 0.6; cursor: default; }
+.promo-msg { font-size: 0.8rem; line-height: 1.4; }
+.promo-msg.ok { color: #1d6b3a; }
+.promo-msg.bad { color: #b3261e; }
+.book-total .price-was { text-decoration: line-through; }
 .field .err { color: #b3261e; font-size: 0.76rem; display: none; }
 .field.invalid input { border-color: #b3261e; background: #fdf4f3; }
 .field.invalid .err { display: block; }
